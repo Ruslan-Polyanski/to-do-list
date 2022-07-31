@@ -14,7 +14,18 @@
         <h1>ToDo List</h1>
     </header>
 
-
+    <main>
+        <form autocomplete="off">
+            <label>
+                <input id="new-todo" name="todo" type="text" placeholder="New todo" />
+            </label>
+            <select id="user-todo" name="user">
+                <option disabled selected>Select user</option>
+            </select>
+            <button>Add Todo</button>
+        </form>
+        <ul id="todo-list"></ul>
+    </main>
     
     <script src="app.js"></script>
 </body>
