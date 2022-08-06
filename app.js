@@ -27,11 +27,26 @@ function printTodo({id, userId, title, completed}){
     let close = document.createElement('span');
     close.innerHTML = '&times;';
     close.className = 'close';
+    close.addEventListener('click', handlClose);
 
     li.prepend(status);
     li.append(close);
 
     todoList.prepend(li);
+}
+
+function removeTodo(todoId){
+    todos = todos.filter(todo => todoId !== todo.id);
+    let todo = todoList.querySelector(`[data-id="${todoId}"]`);
+    todo.querySelector('input').removeEventListener('change', createTodoChange);
+    todo.querySelector('.close').removeEventListener('click', handlClose);
+
+    todo.remove();
+}
+
+function handlClose(e){
+    let todoId = e.target.parentElement.dataset.id;
+    deleteTodo(todoId);
 }
 
 function createUserOption(user){
@@ -100,6 +115,18 @@ async function toggleTodoComplete(todoId, completed){
         }
 
     });
+}
+
+async function deleteTodo(todoId){
+    let response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,{
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json'
+        }
+    });
+    if(response.ok){
+        removeTodo(todoId);
+    }
 }
 
 
