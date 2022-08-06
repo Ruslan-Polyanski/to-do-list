@@ -1,4 +1,6 @@
 
+(function(){
+    
 let users = [];
 let todos = [];
 let todoList = document.getElementById('todo-list');
@@ -7,6 +9,10 @@ let form = document.querySelector('form');
 
 document.addEventListener('DOMContentLoaded', initApp);
 form.addEventListener('submit', createSubmit);
+
+function alertError(error){
+    alert(error.massage);
+}
 
 function getUserName(userId){
     let user = users.find(user => user.id === userId);
@@ -82,52 +88,79 @@ function createTodoChange(){
 }
 
 async function getAllUsers(){
-    let response = await fetch('https://jsonplaceholder.typicode.com/users?_limit=5');
-    let date = await response.json();
-    return date;
+    try {
+        let response = await fetch('https://jsonplaceholder.typicode.com/users?_limit=5');
+        let date = await response.json();
+        return date;
+    } catch (error) {
+        alertError(error);
+    }
 }
 
 async function getAllTodos(){
-    let response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=15');
-    let date = await response.json();
-    return date;
+    try {
+        let response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=15');
+        let date = await response.json();
+        return date;
+    } catch (error) {
+        alertError(error);
+    }
 }
 
 async function createTodo(todo){
-    let response = await fetch('https://jsonplaceholder.typicode.com/todos',{
-        method: 'POST',
-        body: JSON.stringify(todo),
-        headers: {
-            'Content-type': 'application/json'
-        }
-    });
-
-    let newTodo = await response.json();
-    printTodo(newTodo);
+    try {
+        let response = await fetch('https://jsonplaceholder.typicode.com/todos',{
+            method: 'POST',
+            body: JSON.stringify(todo),
+            headers: {
+                'Content-type': 'application/json'
+            }
+        });
+    
+        let newTodo = await response.json();
+        printTodo(newTodo);
+    } catch (error) {
+        alertError(error);
+    }
 }
 
 async function toggleTodoComplete(todoId, completed){
-    let response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,{
-        method: 'PATCH',
-        body: JSON.stringify({completed: completed}),
-        headers: {
-            'Content-type': 'application/json'
+    try {
+        let response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,{
+            method: 'PATCH',
+            body: JSON.stringify({completed: completed}),
+            headers: {
+                'Content-type': 'application/json'
+            }
+        });
+        if(!response.ok){
+            throw new Error('Faild to connect. Please try later.');
         }
-
-    });
+    } catch (error) {
+        alertError(error);
+    }
 }
 
 async function deleteTodo(todoId){
-    let response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,{
-        method: 'DELETE',
-        headers: {
-            'Content-type': 'application/json'
+    try {
+        let response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,{
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        });
+        if(response.ok){
+            removeTodo(todoId);
+        } else {
+            throw new Error('Faild to connect. Please try later.');
         }
-    });
-    if(response.ok){
-        removeTodo(todoId);
+    } catch (error) {
+        alertError(error);
     }
 }
+
+})();
+
 
 
 
